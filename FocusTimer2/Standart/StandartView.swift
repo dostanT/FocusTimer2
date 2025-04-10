@@ -122,7 +122,7 @@ struct StandartView: View {
                                 get: { viewModel.model.breakTime / 60},
                                 set: { viewModel.updateBreakTime($0) }
                             )) {
-                                ForEach(0..<21) { min in
+                                ForEach(1..<21) { min in
                                     Text("\(min*5)min").tag(min*5)
                                 }
                             }
