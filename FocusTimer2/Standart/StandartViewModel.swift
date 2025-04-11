@@ -10,10 +10,7 @@ class StandartViewModel: ObservableObject {
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private var cancellables = Set<AnyCancellable>()
     
-    // Haptic feedback generators
-    private let lightFeedback = UIImpactFeedbackGenerator(style: .light)
-    private let mediumFeedback = UIImpactFeedbackGenerator(style: .medium)
-    private let heavyFeedback = UIImpactFeedbackGenerator(style: .heavy)
+    private let hapticManager = HapticFeedbackManager() // Используем менеджер хаптики
     
     init() {
         self.model = StandartModel(
@@ -26,7 +23,6 @@ class StandartViewModel: ObservableObject {
             isRunning: false
         )
         setupNotifications()
-        prepareHaptics()
     }
     
     private func setupNotifications() {
@@ -58,21 +54,9 @@ class StandartViewModel: ObservableObject {
         }
     }
     
-    private func prepareHaptics() {
-        lightFeedback.prepare()
-        mediumFeedback.prepare()
-        heavyFeedback.prepare()
-    }
-    
-    private func playAlarm() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            AudioServicesPlaySystemSound(1005)
-        }
-    }
-    
     func startTimer() {
         model.isRunning = true
-        mediumFeedback.impactOccurred()
+        hapticManager.mediumImpact() // Средний хаптический отклик при старте таймера
         
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -83,32 +67,47 @@ class StandartViewModel: ObservableObject {
                         self.model.timeRemaining -= 1
                     }
                 } else {
-                    self.playAlarm()
                     DispatchQueue.main.async {
                         if !self.model.nextPeriod() {
                             DispatchQueue.main.async {
-                                self.stopTimer()
+                                self.stopTimerForStart()
                             }
                         }
                     }
                 }
             }
-
         }
     }
     
-    func stopTimer() {
+    func stopTimerForTimer() {
         model.isRunning = false
         timer?.invalidate()
         timer = nil
         endBackgroundTask()
-        heavyFeedback.impactOccurred()
+
+        // Первый хаптик сигнал
+        hapticManager.mediumImpact()
+
+        // Второй хаптик сигнал через 1 секунду
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            self.hapticManager.mediumImpact()
+        }
+    }
+    
+    func stopTimerForStart() {
+        model.isRunning = false
+        timer?.invalidate()
+        timer = nil
+        endBackgroundTask()
+
+        // Первый хаптик сигнал
+        hapticManager.mediumImpact()
     }
     
     func resetTimer() {
-        stopTimer()
+        stopTimerForStart()
         model.reset()
-        lightFeedback.impactOccurred()
+        hapticManager.lightImpact() // Легкий хаптический отклик при сбросе таймера
     }
     
     func updateWorkTime(_ minutes: Int) {

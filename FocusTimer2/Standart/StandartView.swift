@@ -54,7 +54,7 @@ struct StandartView: View {
                 HStack(spacing: 20) {
                     Button(action: {
                         if viewModel.model.isRunning {
-                            viewModel.stopTimer()
+                            viewModel.stopTimerForTimer()
                         } else {
                             viewModel.startTimer()
                         }

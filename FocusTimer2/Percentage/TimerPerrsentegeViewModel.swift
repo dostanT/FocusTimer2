@@ -9,10 +9,7 @@ class TimerPercentageViewModel: ObservableObject {
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private var cancellables = Set<AnyCancellable>()
     
-    // Haptic feedback generators
-    private let lightFeedback = UIImpactFeedbackGenerator(style: .light)
-    private let mediumFeedback = UIImpactFeedbackGenerator(style: .medium)
-    private let heavyFeedback = UIImpactFeedbackGenerator(style: .heavy)
+    private let hapticManager = HapticFeedbackManager() // Используем менеджер хаптики
     
     init() {
         self.model = TimerPercentageModel(
@@ -25,13 +22,6 @@ class TimerPercentageViewModel: ObservableObject {
             isRunning: false
         )
         setupNotifications()
-        prepareHaptics()
-    }
-    
-    private func prepareHaptics() {
-        lightFeedback.prepare()
-        mediumFeedback.prepare()
-        heavyFeedback.prepare()
     }
     
     private func setupNotifications() {
@@ -71,7 +61,7 @@ class TimerPercentageViewModel: ObservableObject {
     
     func startTimer() {
         model.isRunning = true
-        mediumFeedback.impactOccurred()
+        hapticManager.mediumImpact() // Средний хаптический отклик при старте таймера
         
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -92,7 +82,6 @@ class TimerPercentageViewModel: ObservableObject {
                     }
                 }
             }
-
         }
     }
     
@@ -101,13 +90,13 @@ class TimerPercentageViewModel: ObservableObject {
         timer?.invalidate()
         timer = nil
         endBackgroundTask()
-        heavyFeedback.impactOccurred()
+        hapticManager.mediumImpact() // Сильный хаптический отклик при остановке таймера
     }
     
     func resetTimer() {
         stopTimer()
         model.reset()
-        lightFeedback.impactOccurred()
+        hapticManager.lightImpact() // Легкий хаптический отклик при сбросе таймера
     }
     
     func updateTotalTime(_ hours: Int) {
