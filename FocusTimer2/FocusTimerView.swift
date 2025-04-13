@@ -3,21 +3,52 @@ import SwiftUI
 
 struct FocusTimerView: View {
     
-    @State var selectedTab: Int = 0
+    @StateObject var vm: FocusTimerViewModel = .init()
+    @StateObject var vmForSets = SetsViewModel()
     
     var body: some View{
-        TabView() {
-            Tab("", systemImage: "percent") {
-                TimerPercentageView()
+//        TabView() {
+//            Tab("", systemImage: "percent") {
+//                TimerPercentageView()
+//            }
+//            
+//            Tab("", systemImage: "clock") {
+//                StandartView()
+//            }
+//            
+//            Tab("", systemImage: "house") {
+//                SetsView()
+//            }
+//        }
+        
+        TabView(selection: $vm.selectedTab) {
+            Tab(value: 0) {
+                SetsView()
+                    .environmentObject(vmForSets)
+            } label: {
+                Image(systemName: "house")
             }
             
-            Tab("", systemImage: "clock") {
+            Tab(value: 1) {
                 StandartView()
+            } label: {
+                Image(systemName: "clock")
             }
             
-            Tab("", systemImage: "percent") {
+            Tab(value: 2) {
                 TimerPercentageView()
+            } label: {
+                Image(systemName: "percent")
             }
+            
+            
+            Tab(value: 3) {
+                HistoryView()
+            } label: {
+                Image(systemName: "globe")
+            }
+            
+           
         }
     }
 }
