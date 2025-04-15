@@ -6,5 +6,6 @@
 //
 /*
  14April2025
- Need to change color pallete to white and black for readable 
+ Need to change color pallete to white and black for readable
+ need to create perehod in sets
  */
