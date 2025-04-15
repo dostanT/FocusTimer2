@@ -28,7 +28,15 @@ import Foundation
  */
 
 class SetsViewModel: ObservableObject {
-    @Published var data: [SetsModel] = []
+    @Published var data: [SetsModel] = [SetsModel(name: "New Set", type: .percentage(TimerPercentageModel(
+        totalTime: 7,
+        workPercentage: 70,
+        numberOfIterations: 7,
+        currentIteration: 0,
+        timeRemaining: 0,
+        isWorkTime: true,
+        isRunning: false)))]
+    
     @Published var name: String = ""
     // if 0 -> Percentage else if 1 -> Standart
     @Published var type: Int = 0

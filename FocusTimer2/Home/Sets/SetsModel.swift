@@ -26,3 +26,6 @@ struct SetsModel: Identifiable{
         isWorkTime: true,
         isRunning: false))
 }
+
+
+

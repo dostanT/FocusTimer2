@@ -9,15 +9,18 @@ import SwiftUI
 
 struct SetsCreateView: View {
     @EnvironmentObject var vm: SetsViewModel
+    @Binding var showSheet: Bool
     
     var body: some View {
         NavigationStack{
             VStack{
+                
                 TextField("New Set", text: $vm.name)
                     .padding()
                     .background(.gray.opacity(0.2))
                     .cornerRadius(20)
                     .padding(.horizontal)
+                
                 
                 Picker(selection: $vm.type) {
                     Text("Percantage Timer")
@@ -67,19 +70,51 @@ struct SetsCreateView: View {
                         
                     }
                     else if vm.type == 1{
+                        VStack{
+                            Text("Work")
+                                .font(.caption)
+                            Picker("Work", selection: $vm.workTime) {
+                                ForEach(1..<13, id: \.self) { min in
+                                    Text("\(min*10)min").tag(min*10)
+                                }
+                            }
+                            .pickerStyle(InlinePickerStyle())
+                        }
                         
+                        VStack{
+                            Text("Break")
+                                .font(.caption)
+                            Picker("Break", selection: $vm.breakTime) {
+                                ForEach(1..<13, id: \.self) { min in
+                                    Text("\(min*10)min").tag(min*10)
+                                }
+                            }
+                            .pickerStyle(InlinePickerStyle())
+                        }
+                        
+                        VStack{
+                            Text("Iterations")
+                                .font(.caption)
+                            Picker("Iterations", selection: $vm.numberOfIterations) {
+                                ForEach(1..<21) { i in
+                                    Text("\(i)").tag(i)
+                                }
+                            }
+                            .pickerStyle(InlinePickerStyle())
+                        }
                     }
                     
                 }
-                
                 
                 Button{
                     if vm.name == "" {
                         vm.name = "New Set"
                         vm.add()
+                        showSheet = false
                     }
                     else{
                         vm.add()
+                        showSheet = false
                     }
                 } label: {
                     Text("Save")
@@ -91,7 +126,7 @@ struct SetsCreateView: View {
                         .padding(.horizontal)
                 }
                 
-
+                Spacer()
             }
             
             .navigationTitle("\(vm.name == "" ? "New Set" : vm.name)")
@@ -99,6 +134,3 @@ struct SetsCreateView: View {
     }
 }
 
-#Preview {
-    SetsCreateView()
-}
