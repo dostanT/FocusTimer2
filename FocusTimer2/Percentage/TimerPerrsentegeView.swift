@@ -10,7 +10,7 @@ import AudioToolbox
 import Combine
 
 struct TimerPercentageView: View {
-    @StateObject private var viewModel = TimerPercentageViewModel()
+    @EnvironmentObject private var viewModel: TimerPercentageViewModel
     
     var body: some View {
         VStack(spacing: 20) {

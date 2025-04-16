@@ -5,7 +5,7 @@ import UIKit
 
 
 class StandartViewModel: ObservableObject {
-    @Published private(set) var model: StandartModel
+    @Published var model: StandartModel
     private var timer: Timer?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private var cancellables = Set<AnyCancellable>()
@@ -18,7 +18,7 @@ class StandartViewModel: ObservableObject {
             breakTime: 30 * 60,
             numberOfIterations: 2,
             currentIteration: 0,
-            timeRemaining: 30 * 60,
+            timeRemaining: 0,
             isWorkTime: true,
             isRunning: false
         )
@@ -87,11 +87,6 @@ class StandartViewModel: ObservableObject {
 
         // Первый хаптик сигнал
         hapticManager.mediumImpact()
-
-        // Второй хаптик сигнал через 1 секунду
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            self.hapticManager.mediumImpact()
-        }
     }
     
     func stopTimerForStart() {

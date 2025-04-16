@@ -4,7 +4,7 @@ import AudioToolbox
 import UIKit
 
 class TimerPercentageViewModel: ObservableObject {
-    @Published private(set) var model: TimerPercentageModel
+    @Published var model: TimerPercentageModel
     private var timer: Timer?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private var cancellables = Set<AnyCancellable>()

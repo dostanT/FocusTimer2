@@ -10,15 +10,19 @@ import SwiftUI
 struct SetsView: View {
     
     @EnvironmentObject var vm: SetsViewModel
+    @EnvironmentObject var vmMain: FocusTimerViewModel
+    @EnvironmentObject var vmPercentage: TimerPercentageViewModel
+    @EnvironmentObject var vmStandart: StandartViewModel
+    
     @State var showSheet: Bool = false
     
     var body: some View {
         NavigationStack{
             ScrollView{
-                ForEach($vm.data) { $i in
+                ForEach($vm.data) { i in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text($i.name.wrappedValue)
+                            Text(i.name.wrappedValue)
                                 .font(.title2)
                                 .bold()
                             Button{
@@ -28,7 +32,50 @@ struct SetsView: View {
                             }
                             Spacer()
                             Button {
-                                //cтарт
+                                /*
+                                var totalTime: Int // в часах
+                                var workPercentage: Int
+                                var numberOfIterations: Int
+                                var currentIteration: Int
+                                var timeRemaining: Int
+                                var isWorkTime: Bool
+                                var isRunning: Bool
+                                
+                                var workTime: Int
+                                var breakTime: Int
+                                var numberOfIterations: Int
+                                var currentIteration: Int
+                                var timeRemaining: Int
+                                var isWorkTime: Bool
+                                var isRunning: Bool
+                                 */
+                                switch i.type.wrappedValue {
+                                case .percentage(let model):
+                                    vmPercentage.model = TimerPercentageModel(
+                                        totalTime: model.totalTime,
+                                        workPercentage: model.workPercentage,
+                                        numberOfIterations: model.numberOfIterations,
+                                        currentIteration: 0,
+                                        timeRemaining: 0,
+                                        isWorkTime: true,
+                                        isRunning: false)
+                                    DispatchQueue.main.async{
+                                        vmMain.selectedTab = 2
+                                    }
+                                case .standart(let model):
+                                    vmStandart.model = StandartModel(
+                                        workTime: model.workTime * 60,
+                                        breakTime: model.breakTime * 60,
+                                        numberOfIterations: model.numberOfIterations,
+                                        currentIteration: 0,
+                                        timeRemaining: 0,
+                                        isWorkTime: true,
+                                        isRunning: false)
+                                    
+                                    DispatchQueue.main.async {
+                                        vmMain.selectedTab = 1
+                                    }
+                                }
                             } label: {
                                 Image(systemName: "restart")
                                     .font(.title)
@@ -36,7 +83,7 @@ struct SetsView: View {
                             }
                         }
                         
-                        switch $i.type.wrappedValue {
+                        switch i.type.wrappedValue {
                         case .percentage(let model):
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Percetage timer")
@@ -65,9 +112,6 @@ struct SetsView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
                 }
-
-                .onDelete { vm.data.remove(atOffsets: $0) }
-                .onMove { vm.data.move(fromOffsets: $0, toOffset: $1) }
             }
             .navigationTitle(Text("Sets"))
             .toolbar {

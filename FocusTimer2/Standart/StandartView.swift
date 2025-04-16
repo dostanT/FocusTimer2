@@ -11,7 +11,7 @@ import AudioToolbox
 import Combine
 
 struct StandartView: View {
-    @StateObject private var viewModel = StandartViewModel()
+    @EnvironmentObject private var viewModel: StandartViewModel
     
     var body: some View {
         VStack(spacing: 20) {
