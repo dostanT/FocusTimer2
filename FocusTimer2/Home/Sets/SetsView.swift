@@ -15,6 +15,8 @@ struct SetsView: View {
     @EnvironmentObject var vmStandart: StandartViewModel
     
     @State var showSheet: Bool = false
+    @State var showEditSheet: Bool = false
+    @State var selectedSet: SetsModel? = nil
     
     var body: some View {
         NavigationStack{
@@ -26,7 +28,8 @@ struct SetsView: View {
                                 .font(.title2)
                                 .bold()
                             Button{
-                                //редактировать
+                                selectedSet = i.wrappedValue
+                                showEditSheet = true
                             } label:{
                                 Image(systemName: "pencil")
                             }
@@ -125,6 +128,28 @@ struct SetsView: View {
             }
             .sheet(isPresented: $showSheet) {
                 SetsCreateView(showSheet: $showSheet)
+            }
+            .sheet(item: $selectedSet) { set in
+                switch set.type {
+                case .percentage(let model):
+                    SetsUpdateView(
+                        selectedSet: $selectedSet, // или можно убрать его вовсе
+                        name: set.name,
+                        type: 0,
+                        totalTime: model.totalTime,
+                        workPercentage: model.workPercentage,
+                        numberOfIterations: model.numberOfIterations
+                    )
+                case .standart(let model):
+                    SetsUpdateView(
+                        selectedSet: $selectedSet,
+                        name: set.name,
+                        type: 1,
+                        workTime: model.workTime,
+                        breakTime: model.breakTime,
+                        numberOfIterations: model.numberOfIterations
+                    )
+                }
             }
         }
     }

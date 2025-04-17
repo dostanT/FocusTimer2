@@ -28,7 +28,7 @@ import Foundation
  */
 
 class SetsViewModel: ObservableObject {
-    @Published var data: [SetsModel] = [SetsModel(name: "New Set", type: .percentage(TimerPercentageModel(
+    @Published var data: [SetsModel] = [SetsModel(name: "New Set", typeID: 0, type: .percentage(TimerPercentageModel(
         totalTime: 7,
         workPercentage: 70,
         numberOfIterations: 7,
@@ -49,10 +49,12 @@ class SetsViewModel: ObservableObject {
     
     @Published var numberOfIterations: Int = 7
     
+    
     func add(){
-        var newData: SetsModel = SetsModel(name: name)
+        var newData: SetsModel = SetsModel(name: name, typeID: 0)
         
         if type == 0{
+            newData.typeID = type
             newData.type = .percentage(TimerPercentageModel(
                 totalTime: totalTime,
                 workPercentage: workPercentage,
@@ -63,6 +65,7 @@ class SetsViewModel: ObservableObject {
                 isRunning: false))
         }
         else if type == 1{
+            newData.typeID = type
             newData.type = .standart(StandartModel(
                 workTime: workTime,
                 breakTime: breakTime,
@@ -86,12 +89,47 @@ class SetsViewModel: ObservableObject {
         numberOfIterations = 7
     }
     
-    func delete(){
-        
+    func delete(name: String) {
+        data.removeAll { $0.name == name }
     }
     
-    func update(){
+    func update(name: String) {
+        if let index = data.firstIndex(where: { $0.name == name }) {
+            var updatedSet = data[index]
+            updatedSet.name = self.name
+            updatedSet.typeID = self.type
+            
+            if type == 0 {
+                updatedSet.type = .percentage(TimerPercentageModel(
+                    totalTime: totalTime,
+                    workPercentage: workPercentage,
+                    numberOfIterations: numberOfIterations,
+                    currentIteration: 0,
+                    timeRemaining: 0,
+                    isWorkTime: true,
+                    isRunning: false))
+            } else if type == 1 {
+                updatedSet.type = .standart(StandartModel(
+                    workTime: workTime,
+                    breakTime: breakTime,
+                    numberOfIterations: numberOfIterations,
+                    currentIteration: 0,
+                    timeRemaining: 0,
+                    isWorkTime: true,
+                    isRunning: false))
+            }
+            
+            data[index] = updatedSet
+        }
         
+        // Reset the form
+        
+        type = 0
+        workTime = 25
+        breakTime = 25
+        totalTime = 7
+        workPercentage = 70
+        numberOfIterations = 7
     }
     
     func start(){

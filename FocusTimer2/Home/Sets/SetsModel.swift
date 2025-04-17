@@ -15,8 +15,9 @@ enum SetsType{
 }
 
 struct SetsModel: Identifiable{
-    let id = UUID().uuidString
+    var id = UUID().uuidString
     var name: String
+    var typeID: Int
     var type: SetsType = .percentage(TimerPercentageModel(
         totalTime: 1,
         workPercentage: 80,
